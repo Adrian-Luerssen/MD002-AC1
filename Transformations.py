@@ -64,6 +64,17 @@ class Database:
         result = self.cursor.fetchone()
         return result if result else None
 
+# Nueva función para obtener la distribución de género por país, nico
+    def get_gender_distribution_country(self):
+        self.cursor.execute("""
+            SELECT country, gender, COUNT(*) as count
+            FROM users
+            JOIN locations ON users.user_id = locations.user_id
+            GROUP BY country, gender
+            ORDER BY count DESC
+        """)
+        return self.cursor.fetchall()  
+
     def close(self):
         self.cursor.close()
         self.conn.close()
@@ -77,6 +88,7 @@ def transformation():
     db.insert_stat("Average age", db.get_average_age())
     print("Users by country:", db.get_users_by_country())
     print("Most common city:", db.get_common_city())
+    print("Gender distribution by country:", db.get_gender_distribution_country()) # Nueva función para obtener la distribución de género por país, nico
     db.close()
     
 if __name__ == "__main__":
