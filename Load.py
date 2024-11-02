@@ -1,11 +1,17 @@
 import http.server
 import socketserver
 import os
+import matplotlib.pyplot as plt
+import sqlite3
 
 PORT = 8080
 ASSETS_DIR = "assets"
 
 class ImageRequestHandler(http.server.SimpleHTTPRequestHandler):
+    def log_message(self, format, *args):
+        # Override to suppress logging
+        return
+    
     def do_GET(self):
         if self.path == '/':
             # Serve the main page that lists images in the assets directory
@@ -64,11 +70,69 @@ class ImageRequestHandler(http.server.SimpleHTTPRequestHandler):
             # Serve image files directly
             super().do_GET()
 
-
-def run_webserver():
-    with socketserver.TCPServer(("", PORT), ImageRequestHandler) as httpd:
-        print("serving at port", PORT)
-        httpd.serve_forever()
+class Database:
+    def __init__(self):
+        try:
+            self.conn = sqlite3.connect("user_data.db")
+            self.cursor = self.conn.cursor()
+        except Exception as e:
+            print("Error connecting to the database:", e)
+            exit(1)
+            
+    def load_stat(self, stat_name:str):
+        self.cursor.execute("SELECT user_count,stat_value FROM stats WHERE stat_name = ?", (stat_name,))
+        result = self.cursor.fetchall()
+        return [[age[0],float(age[1])] for age in result] if result is not None else None
+    
+class WebServer:
+    def __init__(self):
+        self.database = Database()
+        self.httpd = socketserver.TCPServer(("", PORT), ImageRequestHandler)
+    def save_chart(self, chart_name:str):
+        plt.savefig(f"{ASSETS_DIR}/{chart_name}.png")
         
+    def generate_charts(self):
+        self.generate_average_age_graph()
+        
+    
+    def generate_average_age_graph(self): 
+        results = self.database.load_stat("Average age")
+        print(results)
+        
+        user_counts = [item[0] for item in results]
+        average_ages = [item[1] for item in results]
+
+        plt.figure(figsize=(10, 6))
+        plt.plot(user_counts, average_ages, color='blue', marker='o', linestyle='-', label="Average Age Distribution")
+        plt.ylim(0, 100)
+        
+        plt.xlabel("User Count")
+        plt.ylabel("Average Age")
+        plt.title("Average Age Distribution over User Count")
+        plt.legend()
+        for i, age in enumerate(average_ages):
+            plt.text(user_counts[i], age, f"{age:.2f}", ha='right', va='bottom', fontsize=8, color='black')
+            
+        self.save_chart("average_age")
+        
+    def empty_assets_dir(self):
+        for file in os.listdir(ASSETS_DIR):
+            os.remove(os.path.join(ASSETS_DIR, file))
+            
+    
+    
+    def run_webserver(self):
+        #print("serving at port", PORT)
+        self.httpd.serve_forever()
+        
+    def stop_webserver(self):
+        self.httpd.shutdown()
+
+def Load():
+    webserver = WebServer()
+    webserver.empty_assets_dir()
+    webserver.generate_charts()
+    webserver.run_webserver()
+
 if __name__ == "__main__":
-    run_webserver()
+    Load()

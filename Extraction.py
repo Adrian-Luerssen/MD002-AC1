@@ -165,6 +165,16 @@ class Database:
         )
         self.conn.commit()
 
+    def drop_tables(self):
+        # drop all tables
+        self.cursor.execute("select 'drop table ' || name || ';' from sqlite_master where type = 'table';")
+        results = self.cursor.fetchall()
+        for result in results:
+            
+            if ("sqlite_sequence" not in result[0]):
+                print(result[0])
+                self.cursor.execute(result[0])
+        self.conn.commit()
     def insert_user(self, user):
         self.cursor.execute(
             """
@@ -191,10 +201,11 @@ class Database:
         self.cursor.close()
         self.conn.close()
  
-        
-def extraction():
+
+def reset_db():
+    Database().drop_tables()        
+def extraction(num_users: int = 10):
     i: int = 0
-    num_users: int = 5000 # Número de usuarios a extraer
     # pasar por los resultados de la API y guardar los usuarios y los lugares en la base de datos
     for result in get_users(num_users):
         i += 1
@@ -207,4 +218,4 @@ def extraction():
     print("Extraction of ",str(num_users)," users completed.")
     
 if __name__ == "__main__":
-    extraction()
+    extraction(500)
