@@ -64,7 +64,11 @@ class ImageRequestHandler(http.server.SimpleHTTPRequestHandler):
             # Serve image files directly
             super().do_GET()
 
-# Set up the server
-with socketserver.TCPServer(("", PORT), ImageRequestHandler) as httpd:
-    print("serving at port", PORT)
-    httpd.serve_forever()
+
+def run_webserver():
+    with socketserver.TCPServer(("", PORT), ImageRequestHandler) as httpd:
+        print("serving at port", PORT)
+        httpd.serve_forever()
+        
+if __name__ == "__main__":
+    run_webserver()
