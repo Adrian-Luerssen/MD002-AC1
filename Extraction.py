@@ -25,7 +25,7 @@ def get_users(num_users: int = 10):
 # Crear un a clase para guardar los usuarios y los lugares
 class User:
     # un constructor para el objecto de usuario
-    def __init__(self, user_id: str, first_name: str, last_name: str, gender: str, email: str, phone: str, dob: datetime, date_of_registration: datetime, profile_picture: str):
+    def __init__(self, user_id: str, first_name: str, last_name: str, gender: str, email: str, phone: str, dob: datetime, age: int , datetime, date_of_registration: datetime, profile_picture: str):
         self.user_id = user_id
         self.first_name = first_name
         self.last_name = last_name
@@ -33,6 +33,7 @@ class User:
         self.email = email
         self.phone = phone
         self.dob = dob
+        self.age = age #nico le agrego la edad
         self.date_of_registration = date_of_registration
         self.profile_picture = profile_picture
 
@@ -47,6 +48,7 @@ class User:
             email=data["email"],
             phone=data["phone"],
             dob=datetime.strptime(data["dob"]["date"], "%Y-%m-%dT%H:%M:%S.%fZ"), # transformar la fecha de nacimiento a un objeto de fecha
+            age=data["dob"]["age"],  # Nueva línea para extraer la edad
             date_of_registration=datetime.strptime(data["registered"]["date"], "%Y-%m-%dT%H:%M:%S.%fZ"), # transformar la fecha de registro a un objeto de fecha
             profile_picture=data["picture"]["large"]
         )
@@ -58,6 +60,7 @@ class User:
         print(f"Email: {self.email}")
         print(f"Phone: {self.phone}")
         print(f"Date of Birth: {self.dob}")
+        print(f"age: {self.age}") # Nueva línea para extraer la edad
         print(f"Date of Registration: {self.date_of_registration}")
         print(f"Profile Picture: {self.profile_picture}")
         return self
