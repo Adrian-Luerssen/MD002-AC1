@@ -26,7 +26,7 @@ def get_users(num_users: int = 10):
 # Crear un a clase para guardar los usuarios y los lugares
 class User:
     # un constructor para el objecto de usuario
-    def __init__(self, user_id: str, first_name: str, last_name: str, gender: str, email: str, phone: str, dob: datetime, age: int , datetime, date_of_registration: datetime, profile_picture: str):
+    def __init__(self, user_id: str, first_name: str, last_name: str, gender: str, email: str, phone: str, dob: datetime, age: int, date_of_registration: datetime, profile_picture: str):
         self.user_id = user_id
         self.first_name = first_name
         self.last_name = last_name
@@ -148,7 +148,12 @@ class Database:
                 phone TEXT,
                 dob DATE,
                 date_of_registration DATE,
-                profile_picture TEXT
+                profile_picture TEXT,
+                age INTEGER,   
+                generation TEXT, 
+                age_classification TEXT, 
+                age_at_registration INTEGER, 
+                time_registered INTEGER
             )
             """
         )
@@ -163,7 +168,8 @@ class Database:
                 state TEXT,
                 street_name TEXT,
                 street_number INTEGER,
-                timezone TEXT
+                timezone TEXT,
+                continent TEXT
             )
             """
         )
@@ -184,6 +190,8 @@ class Database:
 
     def insert_user(self, user):
         # Clasificar generación basada en la edad
+        generation = None
+        age_classification = None
         if user.age >= 77:
             generation = 'Silent Generation'
         elif user.age >= 59:
@@ -226,7 +234,7 @@ class Database:
             INSERT OR REPLACE INTO users (user_id, first_name, last_name, gender, email, phone, dob, age, date_of_registration, profile_picture, generation, age_classification, age_at_registration, time_registered)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (user.user_id, user.first_name, user.last_name, user.gender, user.email, user.phone, user.dob, user.age, user.date_of_registration, user.profile_picture, user.generation, user.age_classification, user.age_at_registration, user.time_registered)
+            (user.user_id, user.first_name, user.last_name, user.gender, user.email, user.phone, user.dob, user.age, user.date_of_registration, user.profile_picture, generation, age_classification, age_at_registration, time_registered)
         )
         self.conn.commit() #fin de la creacion de la columna en user
 
@@ -270,7 +278,7 @@ class Database:
             INSERT INTO locations (user_id, city, coordinates, country, postcode, state, street_name, street_number, timezone, continent)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (location.user_id, location.city, coordinates_json, location.country, location.postcode, location.state, location.street_name, location.street_number, location.timezone, location.continent)
+            (location.user_id, location.city, coordinates_json, location.country, location.postcode, location.state, location.street_name, location.street_number, location.timezone, continent)
         )
         self.conn.commit()# fin de la modificacón de agregado de columna en location
 

@@ -1,9 +1,11 @@
 import http.server
 import socketserver
 import os
+
 import matplotlib.pyplot as plt
 import sqlite3
 import numpy as np
+from Transformations import Database
 
 PORT = 8080
 ASSETS_DIR = "assets"
@@ -71,19 +73,9 @@ class ImageRequestHandler(http.server.SimpleHTTPRequestHandler):
             # Serve image files directly
             super().do_GET()
 
-class Database:
-    def __init__(self):
-        try:
-            self.conn = sqlite3.connect("user_data.db")
-            self.cursor = self.conn.cursor()
-        except Exception as e:
-            print("Error connecting to the database:", e)
-            exit(1)
+
             
-    def load_stat(self, stat_name:str):
-        self.cursor.execute("SELECT user_count,stat_value FROM stats WHERE stat_name = ?", (stat_name,))
-        result = self.cursor.fetchall()
-        return [[age[0],float(age[1])] for age in result] if result is not None else None
+    
     
 class WebServer:
     def __init__(self):
@@ -94,21 +86,31 @@ class WebServer:
         
     def generate_charts(self):
         self.generate_average_age_graph()
+        plt.close()
         self.generate_common_city_user_count_graph()
+        plt.close()
         self.generate_gender_distribution_graph()
+        plt.close()
         self.generate_stacked_generation_distribution_graph()
+        plt.close()
         self.generate_timezone_user_count_graph()
+        plt.close()
         self.generate_continent_user_count_graph()
+        plt.close()
         self.generate_average_age_by_country_graph()
+        plt.close()
         self.generate_time_registered_distribution_graph()
+        plt.close()
         self.generate_age_at_registration_bar_graph()
+        plt.close()
         self.generate_age_at_registration_by_generation_graph()
+        plt.close()
         
     
 
     def generate_average_age_graph(self): 
         results = self.database.load_stat("Average age")
-        print(results)
+        #print(results)
         
         user_counts = [item[0] for item in results]
         average_ages = [item[1] for item in results]
@@ -125,6 +127,7 @@ class WebServer:
             plt.text(user_counts[i], age, f"{age:.2f}", ha='right', va='bottom', fontsize=8, color='black')
             
         self.save_chart("average_age")
+        plt.close()
 
 #nuevo grafico a partir de get_common_city
 
@@ -162,9 +165,9 @@ class WebServer:
         data_by_country = defaultdict(lambda: {"Male": 0, "Female": 0})
 
         for country, gender, count in results:
-            if gender in data_by_country[country]:
-                data_by_country[country][gender] = count
-
+            if gender.title() in [gen.title() for gen in data_by_country[country].keys()]:
+                data_by_country[country][gender.title()] = count
+        #print(data_by_country)
         countries = list(data_by_country.keys())
         male_counts = [data_by_country[country]["Male"] for country in countries]
         female_counts = [data_by_country[country]["Female"] for country in countries]
