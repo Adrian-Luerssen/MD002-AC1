@@ -109,17 +109,6 @@ class Database:
         """, (top_n,))
         return self.cursor.fetchall()
 
-# Nueva función para obtener la cantidad de usuarios por ciudad
-    def get_top_user_count_by_city(self, top_n=10):
-        self.cursor.execute("""
-            SELECT city, COUNT(*) as user_count
-            FROM locations
-            GROUP BY city
-            ORDER BY user_count DESC
-            LIMIT ?
-        """, (top_n,))
-        return self.cursor.fetchall()
-
 # Nueva función para obtener la edad promedio por país
     def get_top_average_age_by_country(self, top_n=10):
         self.cursor.execute("""
@@ -188,17 +177,15 @@ def transformation():
     print("Most common city:", db.get_common_city())
     # Nueva función para obtener la distribución de género por país, nico
 
-    print("Gender distribution by country:", db.get_top_gender_distribution_country())
-    print("Generation distribution by country:", db.get_top_generation_distribution_country())
-    print("user count by timezone:", db.get_user_count_by_timezone())
-    print("user count by continent:", db.get_top_user_count_by_continent())
-    print("user count by city:", db.get_top_user_count_by_city())
-    print("average age by country:", db.get_top_average_age_by_country())
-    print("time registered distribution:", db.get_time_registered_distribution())
-    print("age at registration distribution:", db.get_age_at_registration_distribution())
-    print("age at registration by generation:", db.get_age_at_registration_by_generation())
+    print("Gender distribution by country:", db.get_top_gender_distribution_country()) #se aplicara grafico en barras simple
+    print("Generation distribution by country:", db.get_top_generation_distribution_country()) #se aplicara grafico en barras apilada
+    print("user count by timezone:", db.get_user_count_by_timezone()) #se aplicara grafico en barras simple
+    print("user count by continent:", db.get_top_user_count_by_continent()) #se aplicara grafico en barras simple
+    print("average age by country:", db.get_top_average_age_by_country()) #se aplicara grafico en barras simple
+    print("time registered distribution:", db.get_time_registered_distribution()) #se aplicara grafico en barras simple
+    print("age at registration distribution:", db.get_age_at_registration_distribution()) #se aplicara grafico en barras simple
+    print("age at registration by generation:", db.get_age_at_registration_by_generation()) #se aplicara grafico en barras simple
     
-
 
 
     
