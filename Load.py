@@ -393,8 +393,9 @@ class WebServer:
         self.save_chart("age_at_registration_by_generation")
 
     def empty_assets_dir(self):
-        for file in os.listdir(ASSETS_DIR):
-            os.remove(os.path.join(ASSETS_DIR, file))
+        if os.path.exists(ASSETS_DIR):
+            for file in os.listdir(ASSETS_DIR):
+                os.remove(os.path.join(ASSETS_DIR, file))
             
     
     def run_webserver(self):
