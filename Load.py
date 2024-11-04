@@ -92,6 +92,10 @@ class WebServer:
         self.database = Database()
         self.httpd = socketserver.TCPServer(("", PORT), ImageRequestHandler)
     def save_chart(self, chart_name:str):
+        # make sure the directory exists
+        if not os.path.exists(ASSETS_DIR):
+            os.makedirs(ASSETS_DIR)
+            
         plt.savefig(f"{ASSETS_DIR}/{chart_name}.png")
         
     def generate_charts(self):
