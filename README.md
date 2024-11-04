@@ -24,7 +24,7 @@ echo 'eval "$(pyenv init -)"' >> ~/.profile
 
 Restart the terminal after this step.
 
-### Set the global Python version of the system.
+### Set the global Python version of the system
 
 ```
 pyenv install 3.12.7
