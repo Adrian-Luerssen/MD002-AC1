@@ -92,6 +92,10 @@ class WebServer:
         self.database = Database()
         self.httpd = socketserver.TCPServer(("", PORT), ImageRequestHandler)
     def save_chart(self, chart_name:str):
+        # make sure the directory exists
+        if not os.path.exists(ASSETS_DIR):
+            os.makedirs(ASSETS_DIR)
+            
         plt.savefig(f"{ASSETS_DIR}/{chart_name}.png")
         
     def generate_charts(self):
@@ -389,8 +393,9 @@ class WebServer:
         self.save_chart("age_at_registration_by_generation")
 
     def empty_assets_dir(self):
-        for file in os.listdir(ASSETS_DIR):
-            os.remove(os.path.join(ASSETS_DIR, file))
+        if os.path.exists(ASSETS_DIR):
+            for file in os.listdir(ASSETS_DIR):
+                os.remove(os.path.join(ASSETS_DIR, file))
             
     
     def run_webserver(self):
