@@ -64,7 +64,7 @@ class Database:
         result = self.cursor.fetchone()
         return result if result else None
 
-# Nueva función para obtener la distribución de género por país, nico
+# Nueva función para obtener la distribución de género por país
     def get_top_gender_distribution_country(self, top_n=10):
         self.cursor.execute("""
             SELECT country, gender, COUNT(*) as count
@@ -75,7 +75,6 @@ class Database:
             LIMIT ?
         """, (top_n,))
         return self.cursor.fetchall()
-
 
 # Nueva función para obtener la distribución por generación y país
     def get_top_generation_distribution_country(self, top_n=10):
@@ -196,8 +195,6 @@ def transformation():
     db = Database()
     db.insert_stat("Average age", db.get_average_age())
     
-    
-    # Nueva función para obtener la distribución de género por país, nico
 
     '''
     print("Users by country:", db.get_users_by_country())
