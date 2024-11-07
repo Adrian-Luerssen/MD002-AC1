@@ -135,7 +135,7 @@ class WebServer:
         
         plt.xlabel("User Count")
         plt.ylabel("Average Age")
-        plt.title("Average Age Distribution over User Count")
+        plt.title("Distribución de la Edad Promedio sobre el Conteo de Usuarios")
         plt.legend()
         for i, age in enumerate(average_ages):
             plt.text(user_counts[i], age, f"{age:.2f}", ha='right', va='bottom', fontsize=8, color='black')
@@ -161,7 +161,7 @@ class WebServer:
 
             plt.xlabel("Ciudad")
             plt.ylabel("Cantidad de Usuarios")
-            plt.title("Ciudad con Mayor Cantidad de Usuarios")  # Título en español
+            plt.title("Ciudad con Mayor Cantidad de Usuarios")  
 
             # Guardar el gráfico
             self.save_chart("common_city_user_count")
@@ -196,7 +196,7 @@ class WebServer:
 
         plt.xlabel("Country")
         plt.ylabel("User Count")
-        plt.title("Gender Distribution by Country")
+        plt.title("Distribución de Género por País")
         plt.xticks([i + bar_width / 2 for i in index], countries, rotation=45)
         plt.legend()
 
@@ -243,7 +243,7 @@ class WebServer:
 
         plt.xlabel("Country")
         plt.ylabel("User Count")
-        plt.title("Generation Distribution by Country (Top 10 Countries)")
+        plt.title("Distribución Generacional por País (Top 10 Países)")
         plt.xticks(rotation=45)
         plt.legend()
 
@@ -266,7 +266,7 @@ class WebServer:
 
         plt.xlabel("Timezone")
         plt.ylabel("User Count")
-        plt.title("User Count by Timezone")
+        plt.title("Distribución de Usuarios por Zona Horaria")
         plt.xticks(rotation=45, ha='right')
 
         # Guardar el gráfico
@@ -354,7 +354,7 @@ class WebServer:
 
         plt.xlabel("Edad al Momento del Registro")
         plt.ylabel("Cantidad de Usuarios")
-        plt.title("Distribución de Usuarios según Edad al Momento del Registro")  # Título en español
+        plt.title("Distribución de Usuarios según Edad al Momento del Registro")  
         plt.xticks(rotation=45, ha='right')
 
         # Guardar el gráfico
