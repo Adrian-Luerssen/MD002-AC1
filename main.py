@@ -33,7 +33,7 @@ def main():
             webserver.stop_webserver()  # Signal the web server to stop
             break
         else:
-            printf("Invalid option. Please try again.")
+            print("Invalid option. Please try again.")
         pass
     # Wait for the web server thread to finish
     t1.join()
