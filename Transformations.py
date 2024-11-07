@@ -67,26 +67,44 @@ class Database:
 # Nueva función para obtener la distribución de género por país
     def get_top_gender_distribution_country(self, top_n=10):
         self.cursor.execute("""
-            SELECT country, gender, COUNT(*) as count
+        WITH CountryTotals AS (
+            SELECT country, COUNT(*) as total_count
             FROM users
             JOIN locations ON users.user_id = locations.user_id
-            GROUP BY country, gender
-            ORDER BY count DESC
+            GROUP BY country
+            ORDER BY total_count DESC
             LIMIT ?
-        """, (top_n,))
+        )
+        SELECT locations.country, users.gender, COUNT(*) as count
+        FROM users
+        JOIN locations ON users.user_id = locations.user_id
+        WHERE locations.country IN (SELECT country FROM CountryTotals)
+        GROUP BY locations.country, users.gender
+        ORDER BY locations.country, count DESC
+    """, (top_n,))
         return self.cursor.fetchall()
+
 
 # Nueva función para obtener la distribución por generación y país
     def get_top_generation_distribution_country(self, top_n=10):
         self.cursor.execute("""
-            SELECT country, generation, COUNT(*) as count
+            WITH CountryTotals AS (
+                SELECT country, COUNT(*) as total_count
+                FROM users
+                JOIN locations ON users.user_id = locations.user_id
+                GROUP BY country
+                ORDER BY total_count DESC
+                LIMIT ?
+            )
+            SELECT locations.country, users.generation, COUNT(*) as count
             FROM users
             JOIN locations ON users.user_id = locations.user_id
-            GROUP BY country, generation
-            ORDER BY count DESC
-            LIMIT ?
+            WHERE locations.country IN (SELECT country FROM CountryTotals)
+            GROUP BY locations.country, users.generation
+            ORDER BY locations.country, count DESC
         """, (top_n,))
         return self.cursor.fetchall()
+
 
 # Nueva función para obtener la cantidad de usuarios por zona horaria
     def get_user_count_by_timezone(self):
@@ -101,26 +119,38 @@ class Database:
 # Nueva función para obtener la cantidad de usuarios por continente
     def get_top_user_count_by_continent(self, top_n=10):
         self.cursor.execute("""
-            SELECT continent, COUNT(*) as user_count
-            FROM locations
-            GROUP BY continent
+            WITH ContinentTotals AS (
+                SELECT continent, COUNT(*) as user_count
+                FROM locations
+                GROUP BY continent
+                ORDER BY user_count DESC
+                LIMIT ?
+            )
+            SELECT continent, user_count
+            FROM ContinentTotals
             ORDER BY user_count DESC
-            LIMIT ?
         """, (top_n,))
         return self.cursor.fetchall()
+
 
 # Nueva función para obtener la edad promedio por país
     def get_top_average_age_by_country(self, top_n=10):
         self.cursor.execute("""
-            SELECT country, AVG((julianday('now') - julianday(dob)) / 365.25) AS average_age
-            FROM users
-            JOIN locations ON users.user_id = locations.user_id
-            WHERE dob IS NOT NULL
-            GROUP BY country
+            WITH CountryAges AS (
+                SELECT country, AVG((julianday('now') - julianday(dob)) / 365.25) AS average_age
+                FROM users
+                JOIN locations ON users.user_id = locations.user_id
+                WHERE dob IS NOT NULL
+                GROUP BY country
+                ORDER BY average_age DESC
+            )
+            SELECT country, average_age
+            FROM CountryAges
             ORDER BY average_age DESC
             LIMIT ?
         """, (top_n,))
         return self.cursor.fetchall()
+
 
 # Nueva función para obtener la distribución de 'time_registered'
     def get_time_registered_distribution(self):
